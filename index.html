@@ -2,33 +2,114 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>GitHub Test Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>autopages</title>
   <style>
-    body {
-      text-align: center;
-      margin-top: 100px;
-      font-family: Arial;
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --line: #d9e2ec;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #0f766e;
     }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 32px;
+      line-height: 1.2;
+    }
+    .intro {
+      margin: 0 0 24px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .item {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+    }
+    .item h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+    .item p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    a.button {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      color: #fff;
+      background: var(--accent);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-weight: 600;
+    }
+    .note {
+      margin-top: 20px;
+      padding: 14px 16px;
+      background: #eefbf7;
+      border: 1px solid #c9f0e4;
+      border-radius: 8px;
+      color: #115e59;
+      line-height: 1.5;
+    }
+    code {
+      background: #eef2f7;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+    }
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
     }
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <h1>autopages</h1>
+    <p class="intro">위키 구조 확인용 페이지와 변경 모니터 페이지를 한곳에서 볼 수 있도록 정리한 목록입니다.</p>
 
-  <h1>🚀 GitHub 페이지 테스트</h1>
-  <p>정상적으로 배포되면 이 페이지가 보입니다.</p>
+    <div class="grid">
+      <section class="item">
+        <h2>서비스/상품 문서 트리</h2>
+        <p>02. 서비스/상품 및 연결된 하위 문서를 트리 구조로 확인할 수 있는 페이지입니다.</p>
+        <a class="button" href="./wiki_tree_bizsolution_2043412125.html">페이지 열기</a>
+      </section>
 
-  <button onclick="clickTest()">클릭 테스트</button>
-  <p id="result"></p>
+      <section class="item">
+        <h2>조직관리 변경 모니터</h2>
+        <p>[조직관리]-업무운영 문서와 하위 문서들을 기준으로 만든 모니터 화면입니다.</p>
+        <a class="button" href="./partnersvcdev_560479457_monitor.html">페이지 열기</a>
+      </section>
+    </div>
 
-  <script>
-    function clickTest() {
-      document.getElementById("result").innerText = "정상 작동!";
-      console.log("GitHub Pages JS OK");
-    }
-  </script>
-
+    <div class="note">
+      현재 GitHub 저장소에 올라가는 것은 이 시점의 결과물입니다. 로컬 자동 점검이 계속 갱신하는 파일을 GitHub 쪽에도 자동 반영하려면, 별도의 배포 연동이 한 단계 더 필요합니다.
+    </div>
+  </div>
 </body>
 </html>

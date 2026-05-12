@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="60">
+  <title>조직관리 - 업무운영 변경 모니터</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --line: #d9e0ea;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #0f766e;
+      --accent-soft: #ccfbf1;
+      --warn: #92400e;
+      --warn-soft: #fef3c7;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .hero, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px 20px;
+    }
+    .hero { margin-bottom: 16px; }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 16px;
+      min-height: 92px;
+    }
+    .stat .label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .stat .value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    input[type="search"] {
+      width: min(420px, 100%);
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font: inherit;
+      background: #fff;
+    }
+    button, .link-btn {
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    button:hover, .link-btn:hover { border-color: #b7c4d6; }
+    .callout {
+      margin-bottom: 16px;
+      background: var(--warn-soft);
+      color: var(--warn);
+      border: 1px solid #f4d28d;
+      border-radius: 8px;
+      padding: 12px 14px;
+      line-height: 1.5;
+    }
+    .tree {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+    .tree ul {
+      list-style: none;
+      margin: 6px 0 0 22px;
+      padding-left: 14px;
+      border-left: 1px solid #e5e7eb;
+    }
+    .node {
+      margin: 6px 0;
+    }
+    details > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    details > summary::-webkit-details-marker { display: none; }
+    .twisty {
+      width: 16px;
+      text-align: center;
+      color: var(--muted);
+      flex: 0 0 16px;
+    }
+    details[open] > summary .twisty { transform: rotate(90deg); }
+    .page-link {
+      color: var(--text);
+      text-decoration: none;
+    }
+    .page-link:hover { color: var(--accent); }
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-left: 6px;
+      white-space: nowrap;
+    }
+    .match-hidden { display: none !important; }
+    .footer {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    @media (max-width: 880px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .wrap { padding: 16px; }
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 24px; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      input[type="search"] { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>조직관리 - 업무운영 변경 모니터</h1>
+      <p class="sub">`partnersvcdev` 공간의 <a class="page-link" href="https://wiki.daumkakao.com/pages/viewpage.action?pageId=560479457" target="_blank" rel="noreferrer">[조직관리]-업무운영</a> 문서와 하위 문서를 2시간마다 점검합니다.</p>
+    </section>
+
+    <div class="grid">
+      <div class="stat">
+        <div class="label">점검 주기</div>
+        <div class="value">2시간</div>
+      </div>
+      <div class="stat">
+        <div class="label">현재 표시 문서 수</div>
+        <div class="value" id="docCount">0</div>
+      </div>
+      <div class="stat">
+        <div class="label">마지막 기록 시각</div>
+        <div class="value" id="lastScan" style="font-size:16px;">준비 중</div>
+      </div>
+      <div class="stat">
+        <div class="label">브라우저 자동 새로고침</div>
+        <div class="value" style="font-size:16px;">60초</div>
+      </div>
+    </div>
+
+    <section class="panel">
+      <div class="callout">
+        첫 자동 점검이 완료되면 하위 문서를 재귀적으로 다시 수집해 전체 구조를 확장합니다. 그 이후부터는 변경분이 생길 때마다 이 파일이 갱신되고, 이 페이지를 열어둔 상태에서는 자동 새로고침으로 최신 상태를 확인할 수 있습니다.
+      </div>
+
+      <div class="toolbar">
+        <input id="search" type="search" placeholder="문서명 검색">
+        <button id="expandAll" type="button">전체 펼치기</button>
+        <button id="collapseAll" type="button">전체 접기</button>
+        <a class="link-btn" href="https://wiki.daumkakao.com/pages/viewpage.action?pageId=560479457" target="_blank" rel="noreferrer">원본 문서 열기</a>
+      </div>
+
+      <div id="tree"></div>
+      <div class="footer">이 페이지는 로컬 파일이며, 자동 점검이 같은 파일을 덮어써서 상태를 갱신합니다.</div>
+    </section>
+  </div>
+
+  <script>
+    const snapshot = {
+      lastScanAt: "2026-05-12T00:00:00.000Z",
+      pages: {
+        "560479457": { "title": "[조직관리]-업무운영", "parentId": null, "version": 25, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=560479457" },
+        "2001618534": { "title": "2026년 1분기 (1월-3월)", "parentId": "560479457", "version": 155, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=2001618534" },
+        "2001618543": { "title": "2026년 1분기 (1월-3월) 회고", "parentId": "560479457", "version": 9, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=2001618543" },
+        "2001618551": { "title": "2026년 2분기 (4월-6월)", "parentId": "560479457", "version": 97, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=2001618551" },
+        "2001618553": { "title": "2026년 2분기 (4월-6월) 회고", "parentId": "560479457", "version": 7, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=2001618553" },
+        "2001618555": { "title": "2026년 3분기 (7월-9월)", "parentId": "560479457", "version": 15, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=2001618555" },
+        "2001618558": { "title": "2026년 3분기 (7월-9월) 회고", "parentId": "560479457", "version": 5, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=2001618558" },
+        "2001618560": { "title": "2026년 4분기 (10월-12월)", "parentId": "560479457", "version": 16, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=2001618560" },
+        "2001618563": { "title": "2026년 4분기 (10월-12월) 회고", "parentId": "560479457", "version": 5, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=2001618563" },
+        "1038167390": { "title": "운영 히스토리", "parentId": "560479457", "version": 1, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1038167390" },
+        "513182695": { "title": "2018년 4분기", "parentId": "1038167390", "version": 4, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=513182695" },
+        "540146187": { "title": "2019년 1분기", "parentId": "1038167390", "version": 2, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=540146187" },
+        "560484417": { "title": "2019년 2분기", "parentId": "1038167390", "version": 1, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=560484417" },
+        "590405718": { "title": "2019년 3분기", "parentId": "1038167390", "version": 1, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=590405718" },
+        "608413917": { "title": "2019년 4분기", "parentId": "1038167390", "version": 1, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=608413917" },
+        "615930086": { "title": "2020년 1분기", "parentId": "1038167390", "version": 5, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=615930086" },
+        "790314363": { "title": "2021년 3분기", "parentId": "1038167390", "version": 2, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=790314363" },
+        "1038167407": { "title": "2022년 하반기 (11월-1월)", "parentId": "1038167390", "version": 112, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1038167407" },
+        "1080111544": { "title": "2023년 상반기 (1월)", "parentId": "1038167390", "version": 19, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1080111544" },
+        "1087914283": { "title": "2023년 상반기 (2월-3월)", "parentId": "1038167390", "version": 56, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1087914283" },
+        "1123805653": { "title": "2023년 2/4분기 (4월-6월)", "parentId": "1038167390", "version": 117, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1123805653" },
+        "1174560741": { "title": "2023년 3/4분기 (7월-9월)", "parentId": "1038167390", "version": 58, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1174560741" },
+        "1237027691": { "title": "2023년 4/4분기 (10월-12월)", "parentId": "1038167390", "version": 45, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1237027691" },
+        "1302165022": { "title": "2024년 1/4분기 (1월-3월)", "parentId": "1038167390", "version": 34, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1302165022" },
+        "1302165028": { "title": "2024년 2/4분기 (4월-6월)", "parentId": "1038167390", "version": 109, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1302165028" },
+        "1302165033": { "title": "2024년 3/4분기 (7월-9월)", "parentId": "1038167390", "version": 148, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1302165033" },
+        "1302165039": { "title": "2024년 4/4분기 (10월-12월)", "parentId": "1038167390", "version": 81, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1302165039" },
+        "1621615705": { "title": "2025년 1분기 (1월-3월)", "parentId": "1038167390", "version": 100, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1621615705" },
+        "1627548081": { "title": "2025년 1분기 (1월-3월) 성과 회고", "parentId": "1038167390", "version": 30, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1627548081" },
+        "1621615707": { "title": "2025년 2분기 (4월-6월)", "parentId": "1038167390", "version": 88, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1621615707" },
+        "1627548086": { "title": "2025년 2분기 (4월-6월) 성과 회고", "parentId": "1038167390", "version": 35, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1627548086" },
+        "1630544418": { "title": "2025년 2월 업무 우선순위 선별", "parentId": "1038167390", "version": 4, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1630544418" },
+        "1768865061": { "title": "2025년 2분기 (4월-6월) 위클리 진행점검", "parentId": "1038167390", "version": 11, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1768865061" },
+        "1621615711": { "title": "2025년 3분기 (7월-9월)", "parentId": "1038167390", "version": 141, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1621615711" },
+        "1627548088": { "title": "2025년 3분기 (7월-9월) 성과 회고", "parentId": "1038167390", "version": 16, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1627548088" },
+        "1621615713": { "title": "2025년 4분기 (10월-12월)", "parentId": "1038167390", "version": 95, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1621615713" },
+        "1627548091": { "title": "2025년 4분기 (10월-12월) 성과 회고", "parentId": "1038167390", "version": 12, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1627548091" },
+        "1840857248": { "title": "2025년 7월-12월 포트폴리오 관리", "parentId": "1038167390", "version": 85, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1840857248" },
+        "1966309300": { "title": "2025년 12월-01월 오픈 시나리오", "parentId": "1038167390", "version": 121, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1966309300" },
+        "904706059": { "title": "카카오 비즈니스 이관 자료", "parentId": "1038167390", "version": 1, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=904706059" },
+        "733339215": { "title": "카포비 통합가입 배포 체크리스트", "parentId": "1038167390", "version": 72, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=733339215" },
+        "731725360": { "title": "통합 가입 철회 체크 리스트", "parentId": "1038167390", "version": 13, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=731725360" },
+        "904706064": { "title": "카카오 비즈니스 운영 시스템", "parentId": "904706059", "version": 2, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=904706064" },
+        "790314397": { "title": "스프린트 07-1 (2021.06.28-2021.07.11, 2W)", "parentId": "790314363", "version": 3, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=790314397" },
+        "1038175236": { "title": "2022년 회의록 (11월-2월)", "parentId": "1038167407", "version": 25, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=1038175236" },
+        "627431426": { "title": "스프린트 03-1 (2020.03.05-2020.03.19, 2W)", "parentId": "615930086", "version": 4, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=627431426" },
+        "617932414": { "title": "스프린트 02-2 (2020.02.17-2020.03.08, 3W)", "parentId": "615930086", "version": 3, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=617932414" },
+        "615930107": { "title": "스프린트 02-1 (2020.02.03-2020.02.16, 2W)", "parentId": "615930086", "version": 7, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=615930107" },
+        "611638509": { "title": "스프린트 01-2 (2020.01.20-2020.02.03, 2W)", "parentId": "615930086", "version": 12, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=611638509" },
+        "608413834": { "title": "스프린트 01-1 (2020.01.06-2020.01.17, 2W)", "parentId": "615930086", "version": 14, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=608413834" },
+        "601692932": { "title": "스프린트 12-1 (2019.12.09-2019.12.22, 2W)", "parentId": "608413917", "version": 9, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=601692932" },
+        "606767908": { "title": "스프린트 12-2 (2019.12.23-2020.01.05, 2W)", "parentId": "608413917", "version": 4, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=606767908" },
+        "593879443": { "title": "스프린트 11-2 (2019.11.18-2019.12.08, 3W)", "parentId": "608413917", "version": 10, "url": "https://wiki.daumkakao.com/pages/viewpage.action?pageId=593879443" }
+      }
+    };
+
+    const allPages = Object.entries(snapshot.pages).map(([id, page]) => ({ id, ...page }));
+    const childrenByParent = new Map();
+
+    for (const page of allPages) {
+      const key = page.parentId || "__root__";
+      if (!childrenByParent.has(key)) childrenByParent.set(key, []);
+      childrenByParent.get(key).push(page);
+    }
+
+    for (const pages of childrenByParent.values()) {
+      pages.sort((a, b) => a.title.localeCompare(b.title, "ko"));
+    }
+
+    const treeRoot = document.getElementById("tree");
+    document.getElementById("docCount").textContent = allPages.length.toLocaleString("ko-KR");
+    document.getElementById("lastScan").textContent = new Date(snapshot.lastScanAt).toLocaleString("ko-KR");
+
+    function buildBranch(parentId) {
+      const list = document.createElement("ul");
+      list.className = "tree";
+      const nodes = childrenByParent.get(parentId) || [];
+
+      for (const page of nodes) {
+        const item = document.createElement("li");
+        item.className = "node";
+        item.dataset.title = page.title.toLowerCase();
+
+        const childNodes = childrenByParent.get(page.id) || [];
+        if (childNodes.length > 0) {
+          const details = document.createElement("details");
+          details.open = page.id === "560479457" || page.id === "1038167390";
+          const summary = document.createElement("summary");
+          summary.innerHTML = `<span class="twisty">▶</span><a class="page-link" href="${page.url}" target="_blank" rel="noreferrer">${escapeHtml(page.title)}</a><span class="meta">v${page.version}</span>`;
+          details.appendChild(summary);
+          details.appendChild(buildBranch(page.id));
+          item.appendChild(details);
+        } else {
+          item.innerHTML = `<div style="display:flex;align-items:center;gap:8px;padding-left:4px;"><span class="twisty"></span><a class="page-link" href="${page.url}" target="_blank" rel="noreferrer">${escapeHtml(page.title)}</a><span class="meta">v${page.version}</span></div>`;
+        }
+        list.appendChild(item);
+      }
+      return list;
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function filterTree(query) {
+      const q = query.trim().toLowerCase();
+      const nodes = [...treeRoot.querySelectorAll(".node")];
+
+      nodes.forEach(node => node.classList.remove("match-hidden"));
+      if (!q) return;
+
+      nodes.forEach(node => {
+        const title = node.dataset.title || "";
+        const matched = title.includes(q);
+        const descendants = [...node.querySelectorAll(".node")];
+        const childMatched = descendants.some(child => (child.dataset.title || "").includes(q));
+        if (!matched && !childMatched) node.classList.add("match-hidden");
+        if (matched) {
+          let parent = node.parentElement;
+          while (parent) {
+            const details = parent.closest("details");
+            if (details) details.open = true;
+            parent = details ? details.parentElement : null;
+          }
+        }
+      });
+    }
+
+    document.getElementById("search").addEventListener("input", event => filterTree(event.target.value));
+    document.getElementById("expandAll").addEventListener("click", () => {
+      treeRoot.querySelectorAll("details").forEach(node => { node.open = true; });
+    });
+    document.getElementById("collapseAll").addEventListener("click", () => {
+      treeRoot.querySelectorAll("details").forEach(node => { node.open = false; });
+    });
+
+    treeRoot.appendChild(buildBranch("__root__"));
+  </script>
+</body>
+</html>
